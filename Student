@@ -1,0 +1,144 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private String name;
+    private int studentId;
+    private ArrayList<String> enrolledCourses;
+
+    public Student(String name, int studentId) {
+        this.name = name;
+        this.studentId = studentId;
+        this.enrolledCourses = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void enrollCourse(String course) {
+        if (enrolledCourses.contains(course)) {
+            throw new IllegalArgumentException("You are already enrolled in this course.");
+        }
+        enrolledCourses.add(course);
+        System.out.println("Successfully enrolled in " + course);
+    }
+
+    public void displayEnrolledCourses() {
+        if (enrolledCourses.isEmpty()) {
+            System.out.println("No courses enrolled.");
+        } else {
+            System.out.println("Enrolled Courses: " + enrolledCourses);
+        }
+    }
+}
+
+public class UniversityEnrollmentSystem {
+    private static final ArrayList<Student> students = new ArrayList<>();
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        boolean exit = false;
+        System.out.println("Welcome to the University Enrollment System");
+
+        while (!exit) {
+            System.out.println("\nSelect an option:");
+            System.out.println("1. Add Student");
+            System.out.println("2. Enroll in a Course");
+            System.out.println("3. View Enrolled Courses");
+            System.out.println("4. Exit");
+            System.out.print("Your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1:
+                        addStudent();
+                        break;
+                    case 2:
+                        enrollStudentInCourse();
+                        break;
+                    case 3:
+                        viewEnrolledCourses();
+                        break;
+                    case 4:
+                        exit = true;
+                        System.out.println("Thank you for using the system. Goodbye!");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please select a valid option.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static void addStudent() {
+        try {
+            System.out.print("Enter student name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter student ID: ");
+            int studentId = Integer.parseInt(scanner.nextLine());
+
+            students.add(new Student(name, studentId));
+            System.out.println("Student " + name + " added successfully.");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid student ID. Please enter a valid integer.");
+        }
+    }
+
+    private static void enrollStudentInCourse() {
+        try {
+            System.out.print("Enter student ID: ");
+            int studentId = Integer.parseInt(scanner.nextLine());
+
+            Student student = findStudentById(studentId);
+            if (student == null) {
+                throw new IllegalArgumentException("Student not found.");
+            }
+
+            System.out.print("Enter course name to enroll: ");
+            String course = scanner.nextLine();
+            student.enrollCourse(course);
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid integer for student ID.");
+        }
+    }
+
+    private static void viewEnrolledCourses() {
+        try {
+            System.out.print("Enter student ID: ");
+            int studentId = Integer.parseInt(scanner.nextLine());
+
+            Student student = findStudentById(studentId);
+            if (student == null) {
+                throw new IllegalArgumentException("Student not found.");
+            }
+
+            System.out.println("Student: " + student.getName());
+            student.displayEnrolledCourses();
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid integer for student ID.");
+        }
+    }
+
+    private static Student findStudentById(int studentId) {
+        for (Student student : students) {
+            if (student.getStudentId() == studentId) {
+                return student;
+            }
+        }
+        return null;
+    }
+}
